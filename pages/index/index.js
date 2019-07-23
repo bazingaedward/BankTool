@@ -1,19 +1,11 @@
 //index.js
 //获取应用实例
 const app = getApp()
+const formatRMB = require('../../miniprogram_npm/format-rmb/index.js')
 
 Page({
   data: {
-    motto: 'Hello World2',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
-  },
-  //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
+    price: 0,
   },
   onLoad: function () {
     if (app.globalData.userInfo) {
@@ -44,11 +36,31 @@ Page({
     }
   },
   getUserInfo: function(e) {
-    console.log(e)
     app.globalData.userInfo = e.detail.userInfo
     this.setData({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
+  },
+  handleInput: function(e) {
+    const { value } = e.detail;
+
+    if(!value){
+      this.setData({
+        price: 0
+      })
+      return;
+    }
+
+    let num = parseFloat(value)
+    let result = formatRMB(num);
+    if(result.errCode === 0){
+      this.setData({
+        price: result.value
+      })
+    }else {
+      console.error(result.msg)
+    }
+    
   }
 })
